@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import ru.pgu.practice.csv_to_doc.model.Response;
 import ru.pgu.practice.csv_to_doc.service.ConverterService;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -39,8 +40,8 @@ public class ConverterController {
         executor.execute(() -> converterService.start(csvFile));
     }
 
-//    @RequestMapping(value = "/check", method = {GET, POST})
-//    public Result checkResult() {
-//        return converterService.checkResult();
-//    }
+    @RequestMapping(value = "/check", method = {GET, POST})
+    public Response checkResult() {
+        return converterService.checkResult();
+    }
 }
