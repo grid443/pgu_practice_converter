@@ -25,21 +25,29 @@ public class ConverterController {
         this.executor = executor;
     }
 
+    /**
+     * TODO write javaDoc
+     * @return
+     */
     @RequestMapping(value = "/test", method = {GET, POST})
     public String test() {
         return "success";
     }
 
 
-    @RequestMapping(
-        value = "/convert",
-        consumes = "multipart/form-data",
-        method = {GET, POST}
-        )
+    /**
+     * TODO write javaDoc
+     * @param csvFile
+     */
+    @RequestMapping(value = "/convert", consumes = "multipart/form-data", method = {GET, POST})
     public void convertCsv(@RequestParam("file") MultipartFile csvFile) {
         executor.execute(() -> converterService.start(csvFile));
     }
 
+    /**
+     * TODO write javaDoc
+     * @return
+     */
     @RequestMapping(value = "/check", method = {GET, POST})
     public Response checkResult() {
         return converterService.checkResult();
