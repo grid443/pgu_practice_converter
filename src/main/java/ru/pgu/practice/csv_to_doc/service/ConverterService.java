@@ -32,7 +32,6 @@ public class ConverterService {
         }
 
         try {
-            File csvFile = toFile(file);
             //TODO convert csv File using Apache POI
             //TODO write xlsx files by 10 lines.
             //For example, if you have 26 lines in source file,
