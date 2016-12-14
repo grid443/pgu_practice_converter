@@ -7,9 +7,34 @@ import java.math.BigDecimal;
 /**
  * TODO write javaDoc
  */
+public enum Sex {MALE, FEMALE}
+
 public class DataRow {
+
     private final String FIO;
     private final int age;
-    private final enum {m, f}
+    private final Sex sex;
     private final BigDecimal salary;
+
+    public String getFIO(){
+        return FIO;
+    }
+    public int getAge(){
+        return age;
+    }
+    public Sex getSex(){
+        return sex;
+    }
+    public BigDecimal getSalary(){
+        return salary;
+    }
+
+}
+//Constructor
+
+DaraRow(String F, int A, Sex S, BigDecimal s) {
+    FIO = F;
+    age = A;
+    sex = S;
+    salary = s;
 }
