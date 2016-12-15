@@ -3,12 +3,11 @@ package ru.pgu.practice.csv_to_doc.model;
 import com.sun.org.apache.xpath.internal.operations.String;
 
 import java.math.BigDecimal;
+import ru.pgu.practice.csv_to_doc.model.Sex;
 
 /**
  * TODO write javaDoc
  */
-public enum Sex {MALE, FEMALE}
-
 public class DataRow {
 
     private final String FIO;
@@ -29,12 +28,11 @@ public class DataRow {
         return salary;
     }
 
-}
 //Constructor
-
-DaraRow(String F, int A, Sex S, BigDecimal s) {
-    FIO = F;
-    age = A;
-    sex = S;
-    salary = s;
+    DaraRow(String F, int A, Sex S, BigDecimal s) {
+        FIO = F;
+        age = A;
+        sex = S;
+        salary = s;
+    }
 }
