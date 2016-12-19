@@ -1,5 +1,10 @@
 package ru.pgu.practice.csv_to_doc.service;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,8 +28,9 @@ public class ConverterService {
 
     private static final String ROOT_DIR = System.getProperties().getProperty("user.dir");
     private static final String DATA_DIR = "data";
-    private static final String TEMPLATE_DIR = "template";
-    private static final String TEMPLATE_FILENAME = "template.xlsx";
+    private static final String RESULT_DIR = "result";
+    private static final String RESULT_FILENAME_TEMPLATE = "result_%s.xlsx";
+
     private ArrayList<DataRow> aRow = new ArrayList<DataRow>();
 
     /**
@@ -41,7 +47,6 @@ public class ConverterService {
             File csvFile = toFile(file);
             Files.lines(csvFile.toPath(), StandardCharsets.UTF_8)
                     .filter(line -> {
-                       // line != "fio;age;sex;salary"; //NEVER COMPARE STRINGS USING == OR != !!!
                         return !Objects.equals(line, "fio;age;sex;salary");
                     })
                     .map(line -> {
@@ -53,14 +58,13 @@ public class ConverterService {
                         DataRow row = new DataRow(parts[0], Age, sex, Salary);
                         return row;
                     })
-                    .forEach((DataRow line) -> {
-
+                    .forEach((DataRow row) -> {
+                        aRow.add(row);
+                        if (aRow.size() == 9){
+                            writeXlsFile(aRow);
+                            aRow.clear();
+                        }
                     } );
-
-            //TODO convert csv File using Apache POI
-            //TODO write xlsx files by 10 lines.
-            //For example, if you have 26 lines in source file,
-            //you should create 2 xlsx files with 10 lines and 1 xlsx file with 6 lines
         } catch (Exception e) {
             log.error("FILE CONVERTING ERROR: \n", e);
         }
@@ -76,9 +80,38 @@ public class ConverterService {
     }
 
     private void writeXlsFile(List<DataRow> rows) {
-        Path templateFile = Paths.get(ROOT_DIR, TEMPLATE_DIR, TEMPLATE_FILENAME);
+        String timestamp = String.valueOf(System.nanoTime());
+        String resultFilename = String.format(RESULT_FILENAME_TEMPLATE, timestamp);
+        File file = Paths.get(ROOT_DIR, RESULT_DIR, resultFilename).toFile();
 
-        //TODO write rows to xlsx file using Apache POI
+        Workbook book = new HSSFWorkbook();
+        Sheet sheet = book.createSheet("CSV Convert");
+        for (DataRow row: rows){
+            String fio = row.getFIO();
+            int age = row.getAge();
+            String sex = row.getSex() == Sex.MALE ? "Мужской": "Женский";
+            BigDecimal salary = row.getSalary();
+
+            Row sheetRow = sheet.createRow(0);
+
+            Cell name = sheetRow.createCell(0);
+            name.setCellValue(fio);
+
+            Cell cellAge = sheetRow.createCell(1);
+            cellAge.setCellValue(Integer.toString(age));
+
+            Cell cellSex = sheetRow.createCell(2);
+            cellSex.setCellValue(sex);
+
+            Cell cellSalary = sheetRow.createCell(3);
+            cellSalary.setCellValue(salary.toString());
+        }
+        rows.stream().map(DataRow::getSalary).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        //sheet.autoSizeColumn(0);
+
+        //book.write(new FileOutputStream(file));
+        //book.close();
     }
 
     private File toFile(MultipartFile multipartFile) throws IOException {
