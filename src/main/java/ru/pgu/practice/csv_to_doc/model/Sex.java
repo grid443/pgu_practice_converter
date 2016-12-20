@@ -1,7 +1,7 @@
 package ru.pgu.practice.csv_to_doc.model;
 
 /**
- * TODO write javaDoc
+ * sex
  */
 public enum Sex {
     MALE, FEMALE

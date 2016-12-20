@@ -12,17 +12,20 @@ import ru.pgu.practice.csv_to_doc.model.DataRow;
 import ru.pgu.practice.csv_to_doc.model.Response;
 import ru.pgu.practice.csv_to_doc.model.Sex;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Convert csv file to xls file
+ */
 public class ConverterService {
     private final Logger log = LoggerFactory.getLogger(ConverterService.class);
 
@@ -31,10 +34,12 @@ public class ConverterService {
     private static final String RESULT_DIR = "result";
     private static final String RESULT_FILENAME_TEMPLATE = "result_%s.xlsx";
 
-    private ArrayList<DataRow> aRow = new ArrayList<DataRow>();
+    private ArrayList<DataRow> rows = new ArrayList<>();
 
     /**
-     * TODO write javaDoc
+     * start reads the csv file line by line,
+     * for each line forms the object "DataRow"
+     * and puts them into a collection of ArrayList
      * @param file
      */
     public void start(MultipartFile file) {
@@ -46,23 +51,20 @@ public class ConverterService {
         try {
             File csvFile = toFile(file);
             Files.lines(csvFile.toPath(), StandardCharsets.UTF_8)
-                    .filter(line -> {
-                        return !Objects.equals(line, "fio;age;sex;salary");
-                    })
+                    .filter(line -> !Objects.equals(line, "fio;age;sex;salary"))
                     .map(line -> {
                         String[] parts;
                         parts = line.split(";");
-                        int Age = Integer.valueOf(parts[1]);
+                        int age = Integer.valueOf(parts[1]);
                         Sex sex = Sex.valueOf(parts[2]);
-                        BigDecimal Salary = new BigDecimal(parts[3]);
-                        DataRow row = new DataRow(parts[0], Age, sex, Salary);
-                        return row;
+                        BigDecimal salary = new BigDecimal(parts[3]);
+                        return new DataRow(parts[0], age, sex, salary);
                     })
                     .forEach((DataRow row) -> {
-                        aRow.add(row);
-                        if (aRow.size() == 9){
-                            writeXlsFile(aRow);
-                            aRow.clear();
+                        rows.add(row);
+                        if (rows.size() == 9){
+                            writeXlsFile(Collections.unmodifiableList(rows));
+                            rows.clear();
                         }
                     } );
         } catch (Exception e) {
@@ -79,39 +81,60 @@ public class ConverterService {
         return response;
     }
 
+    /**
+     * writeXlsFile create xls file
+     * and write data from DataRow into it
+     * @param rows
+     */
     private void writeXlsFile(List<DataRow> rows) {
         String timestamp = String.valueOf(System.nanoTime());
         String resultFilename = String.format(RESULT_FILENAME_TEMPLATE, timestamp);
         File file = Paths.get(ROOT_DIR, RESULT_DIR, resultFilename).toFile();
 
-        Workbook book = new HSSFWorkbook();
-        Sheet sheet = book.createSheet("CSV Convert");
-        for (DataRow row: rows){
-            String fio = row.getFIO();
-            int age = row.getAge();
-            String sex = row.getSex() == Sex.MALE ? "Мужской": "Женский";
-            BigDecimal salary = row.getSalary();
+        try (Workbook book = new HSSFWorkbook();
+             OutputStream os = new FileOutputStream(file)) {
 
-            Row sheetRow = sheet.createRow(0);
+            Sheet sheet = book.createSheet("CSV Convert");
 
-            Cell name = sheetRow.createCell(0);
-            name.setCellValue(fio);
+            for (DataRow row : rows) {
+                String fio = row.getFio();
+                int age = row.getAge();
+                String sex = row.getSex() == Sex.MALE ? "Мужской" : "Женский";
+                BigDecimal salary = row.getSalary();
 
-            Cell cellAge = sheetRow.createCell(1);
-            cellAge.setCellValue(Integer.toString(age));
+                Row sheetRow = sheet.createRow(0);
+                Cell cellFio = sheetRow.createCell(0);
+                cellFio.setCellValue(fio);
 
-            Cell cellSex = sheetRow.createCell(2);
-            cellSex.setCellValue(sex);
+                Cell cellAge = sheetRow.createCell(1);
+                cellAge.setCellValue(Integer.toString(age));
 
-            Cell cellSalary = sheetRow.createCell(3);
-            cellSalary.setCellValue(salary.toString());
+                Cell cellSex = sheetRow.createCell(2);
+                cellSex.setCellValue(sex);
+
+                Cell cellSalary = sheetRow.createCell(3);
+                cellSalary.setCellValue(salary.toString());
+            }
+            BigDecimal sum = rows.stream()
+                    .map(DataRow::getSalary)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            Row sumRow = sheet.createRow(11);
+            Cell cellResult = sumRow.createCell(0);
+            cellResult.setCellValue("Всего:");
+
+            Cell cellSum = sumRow.createCell(3);
+            cellSum.setCellValue(sum.toString());
+
+            sheet.autoSizeColumn(0);
+            book.write(os);
+        }catch (FileNotFoundException e) {
+
+            log.error("File {} not found", file);
+        } catch (IOException e) {
+
+            log.error("xlsx File writing error");
         }
-        rows.stream().map(DataRow::getSalary).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        //sheet.autoSizeColumn(0);
-
-        //book.write(new FileOutputStream(file));
-        //book.close();
     }
 
     private File toFile(MultipartFile multipartFile) throws IOException {
