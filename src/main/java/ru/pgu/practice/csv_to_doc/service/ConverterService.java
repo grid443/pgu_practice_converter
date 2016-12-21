@@ -12,7 +12,11 @@ import ru.pgu.practice.csv_to_doc.model.DataRow;
 import ru.pgu.practice.csv_to_doc.model.Response;
 import ru.pgu.practice.csv_to_doc.model.Sex;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -53,8 +57,7 @@ public class ConverterService {
             Files.lines(csvFile.toPath(), StandardCharsets.UTF_8)
                     .filter(line -> !Objects.equals(line, "fio;age;sex;salary"))
                     .map(line -> {
-                        String[] parts;
-                        parts = line.split(";");
+                        String[] parts = line.split(";");
                         int age = Integer.valueOf(parts[1]);
                         Sex sex = Sex.valueOf(parts[2]);
                         BigDecimal salary = new BigDecimal(parts[3]);
