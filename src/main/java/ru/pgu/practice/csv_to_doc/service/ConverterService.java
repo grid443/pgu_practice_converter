@@ -12,11 +12,7 @@ import ru.pgu.practice.csv_to_doc.model.DataRow;
 import ru.pgu.practice.csv_to_doc.model.Response;
 import ru.pgu.practice.csv_to_doc.model.Sex;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -25,7 +21,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Convert csv file to xls file
@@ -37,6 +34,8 @@ public class ConverterService {
     private static final String DATA_DIR = "data";
     private static final String RESULT_DIR = "result";
     private static final String RESULT_FILENAME_TEMPLATE = "result_%s.xlsx";
+    private static final Pattern linePattern = Pattern
+            .compile("\\p{IsAlphabetic}+( \\p{IsAlphabetic}+)?;\\d+;\\w;\\d+");
 
     private ArrayList<DataRow> rows = new ArrayList<>();
 
@@ -55,21 +54,28 @@ public class ConverterService {
         try {
             File csvFile = toFile(file);
             Files.lines(csvFile.toPath(), StandardCharsets.UTF_8)
-                    .filter(line -> !Objects.equals(line, "fio;age;sex;salary"))
+                    .filter(line -> {
+                        Matcher lineMatcher = linePattern.matcher(line);
+                        return lineMatcher.matches();
+                    })
                     .map(line -> {
+                        log.debug("Line: {}", line);
                         String[] parts = line.split(";");
                         int age = Integer.valueOf(parts[1]);
-                        Sex sex = Sex.valueOf(parts[2]);
+                        Sex sex = "m".equals(parts[2]) ? Sex.MALE : Sex.FEMALE;
                         BigDecimal salary = new BigDecimal(parts[3]);
                         return new DataRow(parts[0], age, sex, salary);
                     })
                     .forEach((DataRow row) -> {
                         rows.add(row);
-                        if (rows.size() == 9){
+                        if (rows.size() == 10){
                             writeXlsFile(Collections.unmodifiableList(rows));
                             rows.clear();
                         }
                     } );
+            if (rows.size() > 0) {
+                writeXlsFile(rows);
+            }
         } catch (Exception e) {
             log.error("FILE CONVERTING ERROR: \n", e);
         }
@@ -89,12 +95,24 @@ public class ConverterService {
      * and write data from DataRow into it
      */
     private void writeXlsFile(List<DataRow> rows) {
+        int i = 0;
         String timestamp = String.valueOf(System.nanoTime());
         String resultFilename = String.format(RESULT_FILENAME_TEMPLATE, timestamp);
-        File file = Paths.get(ROOT_DIR, RESULT_DIR, resultFilename).toFile();
+        //File file = Paths.get(ROOT_DIR, RESULT_DIR, resultFilename).toFile();
+        Path resultDir = Paths.get(ROOT_DIR, RESULT_DIR);
+        if (!Files.exists(resultDir)) {
+            try {
+                Files.createDirectories(resultDir);
+            } catch (IOException e) {
+                throw new IllegalStateException("Can't create result directory", e);
+            }
+        }
+
+        File file = resultDir.resolve(resultFilename).toFile();
 
         try (Workbook book = new HSSFWorkbook();
              OutputStream os = new FileOutputStream(file)) {
+
 
             Sheet sheet = book.createSheet("CSV Convert");
 
@@ -103,8 +121,7 @@ public class ConverterService {
                 int age = row.getAge();
                 String sex = row.getSex() == Sex.MALE ? "Мужской" : "Женский";
                 BigDecimal salary = row.getSalary();
-
-                Row sheetRow = sheet.createRow(0);
+                Row sheetRow = sheet.createRow(i);
                 Cell cellFio = sheetRow.createCell(0);
                 cellFio.setCellValue(fio);
 
@@ -116,12 +133,13 @@ public class ConverterService {
 
                 Cell cellSalary = sheetRow.createCell(3);
                 cellSalary.setCellValue(salary.toString());
+                i++;
             }
             BigDecimal sum = rows.stream()
                     .map(DataRow::getSalary)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            Row sumRow = sheet.createRow(11);
+            Row sumRow = sheet.createRow(i);
             Cell cellResult = sumRow.createCell(0);
             cellResult.setCellValue("Всего:");
 
