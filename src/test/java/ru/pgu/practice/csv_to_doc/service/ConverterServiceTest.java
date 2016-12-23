@@ -86,15 +86,16 @@ public class ConverterServiceTest {
         File[] resultFiles = resultDir.listFiles();
         Assert.assertNotNull(resultFiles);
         Assert.assertEquals(1, resultFiles.length);
+        File file = resultFiles[0];
 
-        HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(resultFiles[0]));
-        HSSFSheet myExcelSheet = myExcelBook.createSheet("CSV Convert");
+        HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(file));
+        HSSFSheet myExcelSheet = myExcelBook.getSheet("CSV Convert");
         HSSFRow row = myExcelSheet.getRow(0);
         Assert.assertEquals("Иван Пупкин", row.getCell(0).getStringCellValue());
 
         Assert.assertEquals("23", row.getCell(1).getStringCellValue());
 
-        Assert.assertEquals("m", row.getCell(2).getStringCellValue());
+        Assert.assertEquals("Мужской", row.getCell(2).getStringCellValue());
 
         Assert.assertEquals("12000", row.getCell(3).getStringCellValue());
         HSSFRow rowTwo = myExcelSheet.getRow(1);
@@ -102,7 +103,7 @@ public class ConverterServiceTest {
         Assert.assertEquals("Всего:", rowTwo.getCell(1).getStringCellValue());
         Assert.assertEquals("12000", rowTwo.getCell(3).getStringCellValue());
 
-        resultFiles[0].delete();
+        file.delete();
     }
 
     /**
@@ -138,15 +139,16 @@ public class ConverterServiceTest {
         File[] resultFiles = resultDir.listFiles();
         Assert.assertNotNull(resultFiles);
         Assert.assertEquals(1, resultFiles.length);
+        File file = resultFiles[0];
 
-        HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(resultFiles[0]));
-        HSSFSheet myExcelSheet = myExcelBook.createSheet("CSV Convert");
+        HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(file));
+        HSSFSheet myExcelSheet = myExcelBook.getSheet("CSV Convert");
         HSSFRow row = myExcelSheet.getRow(0);
         Assert.assertEquals("Иван Иванович", row.getCell(0).getStringCellValue());
 
         Assert.assertEquals("18", row.getCell(1).getStringCellValue());
 
-        Assert.assertEquals("m", row.getCell(2).getStringCellValue());
+        Assert.assertEquals("Мужской", row.getCell(2).getStringCellValue());
 
         Assert.assertEquals("12800", row.getCell(3).getStringCellValue());
 
@@ -155,7 +157,7 @@ public class ConverterServiceTest {
 
         Assert.assertEquals("21", tenthRow.getCell(1).getStringCellValue());
 
-        Assert.assertEquals("f", tenthRow.getCell(2).getStringCellValue());
+        Assert.assertEquals("Женский", tenthRow.getCell(2).getStringCellValue());
 
         Assert.assertEquals("15000", tenthRow.getCell(3).getStringCellValue());
 
@@ -164,7 +166,7 @@ public class ConverterServiceTest {
         Assert.assertEquals("Всего:", totalRow.getCell(1).getStringCellValue());
         Assert.assertEquals("203000", totalRow.getCell(3).getStringCellValue());
 
-        resultFiles[0].delete();
+        file.delete();
     }
 
     /**
@@ -175,7 +177,7 @@ public class ConverterServiceTest {
      */
     @Test
     public void elevenLinesFileTest() throws Exception {
-        URL csvLocation = this.getClass().getClassLoader().getResource("elevenLines.csv");
+        URL csvLocation = this.getClass().getClassLoader().getResource("elevnLines.csv");
         Assert.assertNotNull(csvLocation);
 
         File csvFile = new File(csvLocation.toURI());
@@ -201,50 +203,52 @@ public class ConverterServiceTest {
         File[] resultFiles = resultDir.listFiles();
         Assert.assertNotNull(resultFiles);
         Assert.assertEquals(2, resultFiles.length);
+        File firstFile = resultFiles[0];
+        File secondFile = resultFiles[1];
 
-        HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(resultFiles[0]));
-        HSSFSheet myExcelSheet = myExcelBook.createSheet("CSV Convert");
-        HSSFRow row = myExcelSheet.getRow(0);
-        Assert.assertEquals("Иван Иванович", row.getCell(0).getStringCellValue());
+        HSSFWorkbook firstExcelBook = new HSSFWorkbook(new FileInputStream(firstFile));
+        HSSFSheet firstExcelSheet = firstExcelBook.getSheet("CSV Convert");
+        HSSFRow firstFileRow = firstExcelSheet.getRow(0);
+        Assert.assertEquals("Иван Иванович", firstFileRow.getCell(0).getStringCellValue());
 
-        Assert.assertEquals("18", row.getCell(1).getStringCellValue());
+        Assert.assertEquals("18", firstFileRow.getCell(1).getStringCellValue());
 
-        Assert.assertEquals("m", row.getCell(2).getStringCellValue());
+        Assert.assertEquals("Мужской", firstFileRow.getCell(2).getStringCellValue());
 
-        Assert.assertEquals("12800", row.getCell(3).getStringCellValue());
+        Assert.assertEquals("12800", firstFileRow.getCell(3).getStringCellValue());
 
-        HSSFRow tenthRow = myExcelSheet.getRow(9);
+        HSSFRow tenthRow = firstExcelSheet.getRow(9);
         Assert.assertEquals("Надежда Суркова", tenthRow.getCell(0).getStringCellValue());
 
         Assert.assertEquals("21", tenthRow.getCell(1).getStringCellValue());
 
-        Assert.assertEquals("f", tenthRow.getCell(2).getStringCellValue());
+        Assert.assertEquals("Женский", tenthRow.getCell(2).getStringCellValue());
 
         Assert.assertEquals("15000", tenthRow.getCell(3).getStringCellValue());
 
-        HSSFRow totalRow = myExcelSheet.getRow(10);
-        Assert.assertEquals("Всего:", totalRow.getCell(1).getStringCellValue());
+        HSSFRow firstFileTotalRow = firstExcelSheet.getRow(10);
+        Assert.assertEquals("Всего:", firstFileTotalRow.getCell(1).getStringCellValue());
 
-        Assert.assertEquals("216000", totalRow.getCell(3).getStringCellValue());
+        Assert.assertEquals("203000", firstFileTotalRow.getCell(3).getStringCellValue());
 
-        HSSFWorkbook secExcelBook = new HSSFWorkbook(new FileInputStream(resultFiles[1]));
-        HSSFSheet secExcelSheet = secExcelBook.createSheet("CSV Convert");
+        HSSFWorkbook secExcelBook = new HSSFWorkbook(new FileInputStream(secondFile));
+        HSSFSheet secExcelSheet = secExcelBook.getSheet("CSV Convert");
         HSSFRow secFileRow = secExcelSheet.getRow(0);
         Assert.assertEquals("Иван Моржов", secFileRow.getCell(0).getStringCellValue());
 
         Assert.assertEquals("25", secFileRow.getCell(1).getStringCellValue());
 
-        Assert.assertEquals("m", secFileRow.getCell(2).getStringCellValue());
+        Assert.assertEquals("Мужской", secFileRow.getCell(2).getStringCellValue());
 
         Assert.assertEquals("13000", secFileRow.getCell(3).getStringCellValue());
 
-        HSSFRow secTotalRow = secExcelSheet.getRow(10);
+        HSSFRow secTotalRow = secExcelSheet.getRow(1);
         Assert.assertEquals("Всего:", secTotalRow.getCell(1).getStringCellValue());
 
         Assert.assertEquals("13000", secTotalRow.getCell(3).getStringCellValue());
 
-        resultFiles[0].delete();
-        resultFiles[1].delete();
+        firstFile.delete();
+        secondFile.delete();
     }
 
     private String privateStringFieldValue(Object object, String fieldName) {

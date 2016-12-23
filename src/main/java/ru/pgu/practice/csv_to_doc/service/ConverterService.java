@@ -63,7 +63,6 @@ public class ConverterService {
                         return lineMatcher.matches();
                     })
                     .map(line -> {
-                        log.debug("Line: {}", line);
                         String[] parts = line.split(";");
                         int age = Integer.valueOf(parts[1]);
                         Sex sex = "m".equals(parts[2]) ? Sex.MALE : Sex.FEMALE;
@@ -80,7 +79,8 @@ public class ConverterService {
                     });
             // writing what is left
             if (rows.size() > 0) {
-                writeXlsFile(rows);
+                writeXlsFile(Collections.unmodifiableList(rows));
+                rows.clear();
             }
         } catch (Exception e) {
             log.error("FILE CONVERTING ERROR: \n", e);
