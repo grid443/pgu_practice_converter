@@ -40,9 +40,8 @@ public class ConverterService {
     private ArrayList<DataRow> rows = new ArrayList<>();
 
     /**
-     * start reads the csv file line by line,
-     * for each line forms the object "DataRow"
-     * and puts them into a collection of ArrayList
+     * method start conversion
+     * and puts the result in the result folder
      * @param file
      */
     public void start(MultipartFile file) {
@@ -53,6 +52,11 @@ public class ConverterService {
 
         try {
             File csvFile = toFile(file);
+            /*
+            reads the csv file line by line,
+            for each line forms the object "DataRow"
+            and puts them into a collection of ArrayList
+             */
             Files.lines(csvFile.toPath(), StandardCharsets.UTF_8)
                     .filter(line -> {
                         Matcher lineMatcher = linePattern.matcher(line);
@@ -68,11 +72,13 @@ public class ConverterService {
                     })
                     .forEach((DataRow row) -> {
                         rows.add(row);
-                        if (rows.size() == 10){
+                        // forming 10 rows file of xlsx
+                        if (rows.size() == 10) {
                             writeXlsFile(Collections.unmodifiableList(rows));
                             rows.clear();
                         }
-                    } );
+                    });
+            // writing what is left
             if (rows.size() > 0) {
                 writeXlsFile(rows);
             }
@@ -83,6 +89,7 @@ public class ConverterService {
 
     /**
      * TODO write javaDoc
+     *
      * @return
      */
     public Response checkResult() {
@@ -95,10 +102,8 @@ public class ConverterService {
      * and write data from DataRow into it
      */
     private void writeXlsFile(List<DataRow> rows) {
-        int i = 0;
         String timestamp = String.valueOf(System.nanoTime());
         String resultFilename = String.format(RESULT_FILENAME_TEMPLATE, timestamp);
-        //File file = Paths.get(ROOT_DIR, RESULT_DIR, resultFilename).toFile();
         Path resultDir = Paths.get(ROOT_DIR, RESULT_DIR);
         if (!Files.exists(resultDir)) {
             try {
@@ -116,6 +121,7 @@ public class ConverterService {
 
             Sheet sheet = book.createSheet("CSV Convert");
 
+            int i = 0;
             for (DataRow row : rows) {
                 String fio = row.getFio();
                 int age = row.getAge();
@@ -140,7 +146,7 @@ public class ConverterService {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             Row sumRow = sheet.createRow(i);
-            Cell cellResult = sumRow.createCell(0);
+            Cell cellResult = sumRow.createCell(1);
             cellResult.setCellValue("Всего:");
 
             Cell cellSum = sumRow.createCell(3);
@@ -148,7 +154,7 @@ public class ConverterService {
 
             sheet.autoSizeColumn(0);
             book.write(os);
-        }catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
 
             log.error("File {} not found", file);
         } catch (IOException e) {
