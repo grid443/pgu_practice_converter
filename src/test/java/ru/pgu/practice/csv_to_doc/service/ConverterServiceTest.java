@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import ru.pgu.practice.csv_to_doc.service.impl.ConverterServiceImpl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +15,8 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
+import java.util.Arrays;
+import java.util.UUID;
 
 public class ConverterServiceTest {
 
@@ -31,26 +33,25 @@ public class ConverterServiceTest {
         byte[] content = Files.readAllBytes(csvFile.toPath());
 
         MultipartFile multipartFile = new MockMultipartFile(
-            csvFile.getName(),
-            csvFile.getName(),
-            "text/plain",
-            content
+                csvFile.getName(),
+                csvFile.getName(),
+                "text/plain",
+                content
         );
 
         Assert.assertNotNull(multipartFile);
 
-        ConverterService convertRun = new ConverterService();
-        convertRun.start(multipartFile);
-
+        ConverterServiceImpl converter = new ConverterServiceImpl();
+        String operationId = UUID.randomUUID().toString();
+        converter.start(multipartFile, operationId);
 
         File resultDir = Paths.get(
-            privateStringFieldValue(convertRun, "ROOT_DIR"),
-            privateStringFieldValue(convertRun, "RESULT_DIR")
+                privateStringFieldValue(converter, "ROOT_DIR"),
+                privateStringFieldValue(converter, "RESULT_DIR"),
+                operationId
         ).toFile();
 
-        File[] resultFiles = resultDir.listFiles();
-        Assert.assertNotNull(resultFiles);
-        Assert.assertEquals(0, resultFiles.length);
+        Assert.assertFalse(resultDir.exists());
     }
 
     /**
@@ -75,12 +76,14 @@ public class ConverterServiceTest {
 
         Assert.assertNotNull(multipartFile);
 
-        ConverterService convertRun = new ConverterService();
-        convertRun.start(multipartFile);
+        ConverterServiceImpl converter = new ConverterServiceImpl();
+        String operationId = UUID.randomUUID().toString();
+        converter.start(multipartFile, operationId);
 
         File resultDir = Paths.get(
-                privateStringFieldValue(convertRun, "ROOT_DIR"),
-                privateStringFieldValue(convertRun, "RESULT_DIR")
+                privateStringFieldValue(converter, "ROOT_DIR"),
+                privateStringFieldValue(converter, "RESULT_DIR"),
+                operationId
         ).toFile();
 
         File[] resultFiles = resultDir.listFiles();
@@ -104,6 +107,7 @@ public class ConverterServiceTest {
         Assert.assertEquals("12000", rowTwo.getCell(3).getStringCellValue());
 
         file.delete();
+        resultDir.delete();
     }
 
     /**
@@ -128,12 +132,14 @@ public class ConverterServiceTest {
 
         Assert.assertNotNull(multipartFile);
 
-        ConverterService convertRun = new ConverterService();
-        convertRun.start(multipartFile);
+        ConverterServiceImpl converter = new ConverterServiceImpl();
+        String operationId = UUID.randomUUID().toString();
+        converter.start(multipartFile, operationId);
 
         File resultDir = Paths.get(
-                privateStringFieldValue(convertRun, "ROOT_DIR"),
-                privateStringFieldValue(convertRun, "RESULT_DIR")
+                privateStringFieldValue(converter, "ROOT_DIR"),
+                privateStringFieldValue(converter, "RESULT_DIR"),
+                operationId
         ).toFile();
 
         File[] resultFiles = resultDir.listFiles();
@@ -167,6 +173,7 @@ public class ConverterServiceTest {
         Assert.assertEquals("203000", totalRow.getCell(3).getStringCellValue());
 
         file.delete();
+        resultDir.delete();
     }
 
     /**
@@ -192,17 +199,20 @@ public class ConverterServiceTest {
 
         Assert.assertNotNull(multipartFile);
 
-        ConverterService convertRun = new ConverterService();
-        convertRun.start(multipartFile);
+        ConverterServiceImpl converter = new ConverterServiceImpl();
+        String operationId = UUID.randomUUID().toString();
+        converter.start(multipartFile, operationId);
 
         File resultDir = Paths.get(
-                privateStringFieldValue(convertRun, "ROOT_DIR"),
-                privateStringFieldValue(convertRun, "RESULT_DIR")
+                privateStringFieldValue(converter, "ROOT_DIR"),
+                privateStringFieldValue(converter, "RESULT_DIR"),
+                operationId
         ).toFile();
 
         File[] resultFiles = resultDir.listFiles();
         Assert.assertNotNull(resultFiles);
         Assert.assertEquals(2, resultFiles.length);
+        Arrays.sort(resultFiles);
         File firstFile = resultFiles[0];
         File secondFile = resultFiles[1];
 
@@ -249,11 +259,13 @@ public class ConverterServiceTest {
 
         firstFile.delete();
         secondFile.delete();
+        resultDir.delete();
     }
 
+    //Access to object's private fields
     private String privateStringFieldValue(Object object, String fieldName) {
         try {
-            Field rootDirField = ConverterService.class.getDeclaredField(fieldName);
+            Field rootDirField = ConverterServiceImpl.class.getDeclaredField(fieldName);
             rootDirField.setAccessible(true);
             return (String) rootDirField.get(object);
         } catch (Exception e) {

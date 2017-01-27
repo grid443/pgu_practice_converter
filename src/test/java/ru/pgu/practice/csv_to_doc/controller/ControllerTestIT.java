@@ -7,6 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pgu.practice.csv_to_doc.Application;
+import ru.pgu.practice.csv_to_doc.controller.impl.ConverterControllerImpl;
 
 import java.io.File;
 
@@ -15,16 +16,16 @@ import java.io.File;
 public class ControllerTestIT {
 
     @Autowired
-    private ConverterController controller;
+    private ConverterControllerImpl controller;
 
     @Test
     public void dependencies() throws Exception {
-        controller.test();
+        controller.ping();
     }
 
     @Test
     public void converterTest() {
-        //TODO Read test.csv file
+        //TODO Read ping.csv file
         //TODO convert it to MultipartFile
         //TODO call ConverterService.start(file)
     }
