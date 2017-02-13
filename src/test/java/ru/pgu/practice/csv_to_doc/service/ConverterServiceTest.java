@@ -52,6 +52,8 @@ public class ConverterServiceTest {
         ).toFile();
 
         Assert.assertFalse(resultDir.exists());
+
+        clearDataFiles(converter, operationId);
     }
 
     /**
@@ -106,8 +108,13 @@ public class ConverterServiceTest {
         Assert.assertEquals("Всего:", rowTwo.getCell(1).getStringCellValue());
         Assert.assertEquals("12000", rowTwo.getCell(3).getStringCellValue());
 
-        file.delete();
-        resultDir.delete();
+        Assert.assertTrue(file.delete());
+        Assert.assertTrue(resultDir.delete());
+
+        Assert.assertFalse(file.exists());
+        Assert.assertFalse(resultDir.exists());
+
+        clearDataFiles(converter, operationId);
     }
 
     /**
@@ -172,8 +179,10 @@ public class ConverterServiceTest {
         Assert.assertEquals("Всего:", totalRow.getCell(1).getStringCellValue());
         Assert.assertEquals("203000", totalRow.getCell(3).getStringCellValue());
 
-        file.delete();
-        resultDir.delete();
+        Assert.assertTrue(file.delete());
+        Assert.assertTrue(resultDir.delete());
+
+        clearDataFiles(converter, operationId);
     }
 
     /**
@@ -257,9 +266,11 @@ public class ConverterServiceTest {
 
         Assert.assertEquals("13000", secTotalRow.getCell(3).getStringCellValue());
 
-        firstFile.delete();
-        secondFile.delete();
-        resultDir.delete();
+        Assert.assertTrue(firstFile.delete());
+        Assert.assertTrue(secondFile.delete());
+        Assert.assertTrue(resultDir.delete());
+
+        clearDataFiles(converter, operationId);
     }
 
     //Access to object's private fields
@@ -271,5 +282,20 @@ public class ConverterServiceTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void clearDataFiles(ConverterServiceImpl converter, String operationId) {
+        File dataDir = Paths.get(
+                privateStringFieldValue(converter, "ROOT_DIR"),
+                privateStringFieldValue(converter, "DATA_DIR"),
+                operationId
+        ).toFile();
+
+        File[] dataFiles = dataDir.listFiles();
+        Assert.assertNotNull(dataFiles);
+        for (File dataFile : dataFiles) {
+            Assert.assertTrue(dataFile.delete());
+        }
+        Assert.assertTrue(dataDir.delete());
     }
 }
