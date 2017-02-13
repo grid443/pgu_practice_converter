@@ -12,6 +12,8 @@ public interface ConverterController {
 
     /**
      * Start converting text file to csv asynchronously
+     * @param csvFile file to convert
+     * @return        opration ID
      */
     String convertCsv(MultipartFile csvFile);
 

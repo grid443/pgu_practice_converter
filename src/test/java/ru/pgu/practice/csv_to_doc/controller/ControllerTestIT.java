@@ -1,5 +1,6 @@
 package ru.pgu.practice.csv_to_doc.controller;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import ru.pgu.practice.csv_to_doc.controller.impl.ConverterControllerImpl;
 
 import java.io.File;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {Application.class})
 public class ControllerTestIT {
