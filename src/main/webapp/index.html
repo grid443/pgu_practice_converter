@@ -1,16 +1,49 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="ru">
     <head>
         <meta charset="UTF-8">
-        <title>Reports</title>
-        <link rel="stylesheet" href="css/main.css">
+        <title>Reports Converter</title>
         <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/main.css">
         <script src="js/angular.js"></script>
         <script src="js/controller.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.min.js"></script>
     </head>
     <body ng-app="converter">
-        <a href="ping">PING!</a>
+
+        <nav class="navbar navbar-default">
+          <div class="container">
+            <div class="navbar-header">
+              <a href="ping" class="navbar-brand">PING!</a>
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><span class="glyphicon glyphicon-question-sign"> About</span></a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-envelope"> Contact Us</span></a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-time">History</span></a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        <div class="container text-center">
+          <h1>Загрузка файлов</h1>
+          <p>Вы можете загрузить не более 10 файлов в формате <strong>abc</strong>.<br>
+            Максимальный объем файлов <strong>500 Мб</strong>.
+          </p>
+          <div class="panel panel-default">
+            <div class="panel-heading"><h3>Эти файлы вы уже загрузили:</h3></div>
+            <div class="panel-body">Список пуст</div>
+            <div class="panel-footer text-right"><button class="btn btn-default btn-md">Выбрать</button></div>
+          </div>
+          <button class="btn btn-primary btn-lg" type="submit">Конвертировать</button>
+        </div>
+
     </body>
 </html>
