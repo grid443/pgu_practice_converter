@@ -1,6 +1,21 @@
 'use strict';
 var module = angular.module('converter', []);
-module.controller('convertController', function ($scope, $http) {
+
+module.config(function ($stateProvider) {
+    $stateProvider
+        .state('stateName', {
+            url: '/convert',
+            views: {
+                'convert': {
+                    templateUrl: 'js/controllers/startConvert.html',
+                    controller: 'ConvertController'
+                }
+            }
+        });
+});
+
+
+module.controller('ConvertController', function ($scope, $http) {
     console.log('Converter controller');
 
     var data = {

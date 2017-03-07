@@ -12,7 +12,7 @@
         <script src="js/controlers/controller.js"></script>
     </head>
 
-    <body ng-app="converter" ng-controller="convertController">
+    <body ng-app="converter">
 
         <nav class="navbar navbar-default">
             <div class="container">
@@ -34,57 +34,8 @@
             </div>
         </nav>
 
-        <div class="container text-center" ng-if="state=='start'">
-            <h1>Загрузка файлов</h1>
-            <p>Вы можете загрузить не более 10 файлов в формате <strong>abc</strong>.<br>
-                Максимальный объем файлов <strong>500 Мб</strong>.
-            </p>
-            <div class="panel panel-default">
-                <div class="panel-heading"><h3>Эти файлы вы уже загрузили:</h3></div>
-                <div class="panel-body">Список пуст</div>
-                <div class="panel-footer text-right"><button class="btn btn-default btn-md">Выбрать</button></div>
-            </div>
-            <button class="btn btn-primary btn-lg" type="submit" ng-click="convert()">Конвертировать</button>
-        </div>
-
-        <div class="container text-center" ng-if="state=='convert'">
-            <h1>Подождите</h1>
-            <p>{{stateMessage}}</p>
-            <button class="btn btn-primary btn-lg" ng-click="check()">Проверить статус</button>
-        </div>
-
-        <div ng-if="state=='success'">
-            <div class="container text-center">
-                <h1>Обработка завершена.</h1>
-                <p>Вы можете скачать файлы.</p>
-            </div>
-
-            <ul class="list-group">
-                <li class="list-group-item container media-middle">
-                    learn-enough-html-dangerous.abc
-                    <div class="pull-right">
-                        <a href="#" class="btn btn-success">Скачать <span class="glyphicon glyphicon-download"> </span></a>
-                    </div>
-                </li>
-                <li class="list-group-item container media-middle">
-                    ASIO4ALL v2 Instruction Manual.abc
-                    <div class="pull-right">
-                        <a href="#" class="btn btn-success">Скачать <span class="glyphicon glyphicon-download"> </span></a>
-                    </div>
-                </li>
-                <li class="list-group-item container media-middle">
-                    CorelDRAW X8 (64-Bit).abc
-                    <div class="pull-right">
-                        <a href="#" class="btn btn-success">Скачать <span class="glyphicon glyphicon-download"> </span></a>
-                    </div>
-                </li>
-                <li class="list-group-item container media-middle">
-                    Vegas Pro 13.0 (64-bit).abc
-                    <div class="pull-right">
-                        <a href="#" class="btn btn-success">Скачать <span class="glyphicon glyphicon-download"> </span></a>
-                    </div>
-                </li>
-            </ul>
+        <div class="row col-md-10 col-lg-10 ">
+            <div valign="top" ui-view="convert"></div>
         </div>
 
     </body>
