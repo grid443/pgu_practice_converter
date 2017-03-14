@@ -1,19 +1,19 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Reports Converter</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/main.css">
-    <script src="js/angular.js"></script>
-    <script src="js/controlers/controller.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.min.js"></script>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <script src="../../js/angular.js"></script>
+    <script src="../../js/controlers/controller.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/jquery.min.js"></script>
 </head>
-<body ng-app="converter">
+<body class="fonts">
 
-<nav class="navbar navbar-default">
-    <div class="container">
+    <nav class="navbar navbar-default">
+        <div class="container">
         <div class="navbar-header">
             <a href="ping" class="navbar-brand">PING!</a>
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainNavbar">
@@ -29,14 +29,12 @@
                 <li><a href="#"><span class="glyphicon glyphicon-time">History</span></a></li>
             </ul>
         </div>
-    </div>
-</nav>
+        </div>
+    </nav>
 
-<div class="container text-center">
-    <h1>Подождите</h1>
-    <p>Обработка файлов ещё не закончилась. Это может занять несколько минут.</p>
-    <button class="btn btn-primary btn-lg">Проверить статус</button>
-</div>
+    <div class="container text-center"> <!--TODO: ui-view void or list-->
+        <div class="panel panel-default"></div>
+    </div>
 
 </body>
 </html>

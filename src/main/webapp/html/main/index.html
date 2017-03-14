@@ -3,16 +3,17 @@
     <head>
         <meta charset="UTF-8">
         <title>Reports Converter</title>
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/main.css">
-        <script src="js/angular.js"></script>
-        <script src="js/jquery.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" href="../../css/main.css">
+        <script src="../../js/angular.js"></script>
+        <script src="../../js/angular-ui-router.min.js"></script>
+        <script src="../../js/jquery.min.js"></script>
+        <script src="../../js/bootstrap.min.js"></script>
 
-        <script src="js/controlers/controller.js"></script>
+        <script src="../../js/controlers/controller.js"></script>
     </head>
 
-    <body ng-app="converter">
+    <body class="fonts" ng-app="converter">
 
         <nav class="navbar navbar-default">
             <div class="container">
@@ -28,14 +29,14 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="#"><span class="glyphicon glyphicon-question-sign"> About</span></a></li>
                         <li><a href="#"><span class="glyphicon glyphicon-envelope"> Contact Us</span></a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-time">History</span></a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-time"> History</span></a></li>
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <div class="row col-md-10 col-lg-10 ">
-            <div valign="top" ui-view="convert"></div>
+        <div class="main">
+            <div ui-view="convert"></div>
         </div>
 
     </body>
