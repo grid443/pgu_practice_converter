@@ -17,7 +17,7 @@ module.config(function ($stateProvider) {
             views: {
                 'convert': {
                     templateUrl: 'js/views/main/processing.html',
-                    controller: 'ConvertController'
+                    controller: 'ProcessingController'
                 }
             }
         })
@@ -30,7 +30,7 @@ module.config(function ($stateProvider) {
                 }
             }
         })
-        .state('list', { //TBD
+        .state('list', { //по идее, это history
             url: '/list',
             views: {
                 'convert': {
